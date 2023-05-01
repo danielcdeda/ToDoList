@@ -1,20 +1,45 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const dayNames = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-
+ 
 const app = express();
-
-app.set('view engine', 'ejs');
-
-app.get("/", function(req, res){
-    var today = new Date;
-    var currentDay = today.getDay()
-
-    var day = dayNames[currentDay];
-
-    res.render("list", {kindOfDay: day})
+ 
+var items = ["Buy Food", "Eat Food", "Cook Food"];
+ 
+app.set('view engine', "ejs");
+ 
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+ 
+app.get("/", function (req, res) {
+ 
+  var today = new Date();
+ 
+  var options = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  };
+ 
+  var day = today.toLocaleDateString("en-US", options);
+ 
+ 
+  res.render("list", {
+    kindOfDay: day,
+    newListItems: items
+  });
+ 
 });
-
-app.listen(2048, function(){
-    console.log("working on port 2048!")
-})
+ 
+app.post("/", function (req, res) {
+  var item = req.body.newItem;
+ 
+  items.push(item);
+ 
+  res.redirect("/");
+ 
+});
+ 
+app.listen(2048, function () {
+  console.log("Server started on port 3000.");
+});
